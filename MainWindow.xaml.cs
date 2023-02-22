@@ -1,20 +1,6 @@
 ﻿using System;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Navigation;
 using System.Windows.Threading;
-using System.Windows.Controls;
-using System.Windows.Media.Animation;
-using System.Diagnostics;
-using System.Threading;
-using System.Xml.Linq;
-using static System.Net.WebRequestMethods;
-using Match_3_Test;
 
 namespace Match_3_Test
 {

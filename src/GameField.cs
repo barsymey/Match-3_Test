@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows;
 
@@ -49,6 +45,10 @@ namespace Match_3_Test
         private bool _playerMoveMade;
         private int _score;
 
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="elementTypes"> Amount of element types to spawn in the field </param>
+        /// <param name="canvas"> Canvas to draw element visuals on </param>
         public GameField(int width, int height, int elementTypes, Canvas canvas)
         {
             this._columns = width;
@@ -203,7 +203,7 @@ namespace Match_3_Test
         }
 
         /// <summary>
-        /// Checks active Element for bonus patterns and returns element constructed for replacement if active element is destroyed.
+        /// Checks active Element for bonus patterns and returns element constructed for replacement if active element is matched.
         /// </summary>
         private Element CheckElementForBonus(Element element)
         {
@@ -216,7 +216,7 @@ namespace Match_3_Test
         }
 
         /// <summary>
-        /// Elements that are marked as matched are destroyed
+        /// Elements that are marked as matched are destroyed and score is increased
         /// </summary>
         private void HandleMatchedElements()
         {
@@ -244,11 +244,23 @@ namespace Match_3_Test
             swapedActive = null;
         }
 
+        /// <summary>
+        /// Creates element of a random type without a bonus.
+        /// </summary>
+        /// <param name="x"> Element position X </param>
+        /// <param name="y"> Element position Y </param>
         private void CreateElement(int x, int y)
         {
             elements[x, y] = new Element(x, y, this, _random.Next(0, _elementTypes), BonusTypes.None);
         }
 
+        /// <summary>
+        /// Creates element of a given type with a bonus.
+        /// </summary>
+        /// <param name="x"> Element position X </param>
+        /// <param name="y"> Element position Y </param>
+        /// <param name="type"> Element type </param>
+        /// <param name="bonus"> Bonus type </param>
         private void CreateElement(int x, int y, int type, BonusTypes bonus)
         {
             elements[x, y] = new Element(x, y, this, type, bonus);

@@ -23,7 +23,14 @@ namespace Match_3_Test
         private BonusTypes _bonusType;
         private float _selectedSizeMarginMultipler = 0;
 
-        public ElementVisual(int type, MouseButtonEventHandler clickFunction, Element parent, BonusTypes bonusType)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"> The type of Element to display </param>
+        /// <param name="clickHandler"> What should happen on click </param>
+        /// <param name="parent"> Parent Element </param>
+        /// <param name="bonusType"> Type of bonus to display </param>
+        public ElementVisual(int type, MouseButtonEventHandler clickHandler, Element parent, BonusTypes bonusType)
         {
             _parentElement = parent;
             _bonusType = bonusType;
@@ -64,10 +71,10 @@ namespace Match_3_Test
                 _grid.Children.Add(_bonustRect);
             }
 
-            _grid.MouseLeftButtonDown += clickFunction;
+            _grid.MouseLeftButtonDown += clickHandler;
             _parentElement.parentField.canvas.Children.Add(_grid);
 
-            MainWindow.animationTimer.Tick += ProceedToTarget;
+            MainWindow.animationTimer.Tick += Update;
             SetTargetPosition(_parentElement.posX, _parentElement.posY);
             SetPositionToTarget();
             Panel.SetZIndex(_grid, -1);
@@ -94,7 +101,7 @@ namespace Match_3_Test
             _parentElement.parentField.canvas.Children.Remove(_grid);
             if (_bonustRect != null)
                 _grid.Children.Clear();
-            MainWindow.animationTimer.Tick -= ProceedToTarget;
+            MainWindow.animationTimer.Tick -= Update;
         }
 
         /// <summary>
@@ -118,14 +125,16 @@ namespace Match_3_Test
         }
 
 
-        private void ProceedToTarget(object sender, EventArgs e)
+        private void Update(object sender, EventArgs e)
         {
-            Size elementSize = _parentElement.parentField.GetElementSize();
-            SetElementSize(elementSize);
+            SetElementSize(_parentElement.parentField.GetElementSize());
             Canvas.SetLeft(_grid, (_targetX + Canvas.GetLeft(_grid)) / 2);
             Canvas.SetTop(_grid, (_targetY + Canvas.GetTop(_grid)) / 2 );
         }
 
+        /// <summary>
+        /// Setting Element size in case if parent canvas size is changed. Also manages changing size for marking selected Element
+        /// </summary>
         private void SetElementSize(Size size)
         {
             _grid.Margin = new Thickness(_selectedSizeMarginMultipler);

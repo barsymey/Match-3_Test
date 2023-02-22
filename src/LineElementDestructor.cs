@@ -5,6 +5,9 @@ using System.Windows.Threading;
 
 namespace Match_3_Test
 {
+    /// <summary>
+    /// An object moving through GameField in a certain direction destroying Elements.
+    /// </summary>
     public class LineElementDestructor
     {
         public int posX
@@ -74,6 +77,7 @@ namespace Match_3_Test
             _visual.Destroy();
         }
     }
+
     public enum LineElementDestructorDirection
     {
         Left,
@@ -82,6 +86,9 @@ namespace Match_3_Test
         Down
     }
 
+    /// <summary>
+    /// Visual representation for LineElementDestructor
+    /// </summary>
     public class LineElementDestructorVisual
     {
         Grid _grid;
@@ -106,9 +113,12 @@ namespace Match_3_Test
             _animationTimer.Tick += Update;
             SetTargetPosition(_parent.posX, _parent.posY);
             SetPosition(_targetX, _targetY);
-            Canvas.SetZIndex(_grid, 1);
+            Panel.SetZIndex(_grid, 1);
         }
 
+        /// <summary>
+        /// Setting position to move towards over time
+        /// </summary>
         public void SetTargetPosition(double posX, double posY)
         {
             Size elementSize = _parentField.GetElementSize();
