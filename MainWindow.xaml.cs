@@ -8,6 +8,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Navigation;
 using System.Windows.Threading;
+using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using System.Diagnostics;
 using System.Threading;
@@ -18,20 +19,22 @@ using Match_3_Test;
 namespace Match_3_Test
 {
     /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
+    /// Main game window behaviour.
     /// </summary>
     public partial class MainWindow : Window
     {
         private GameField _mainGameField;
         private int _rows = 8;
         private int _columns = 8;
-        private int _types = 6;
+        private int _types = 5;
         private int _GameDuration = 60;
         private float _logicFPS = 10;
         private float _graphicsFPS = 60;
+        // Separate timers for game logic and visual representation
         public static DispatcherTimer gameLogicTimer;
         public static DispatcherTimer animationTimer;
         public static CountDownTimer countdownTimer;
+
         public MainWindow()
         {
             ResourceManager.LoadGraphics();
@@ -91,11 +94,6 @@ namespace Match_3_Test
             ScoreText.Content = ("Score: " + score);
         }
 
-        private void ResetField()
-        {
-            _mainGameField.ClearField();
-        }
-
         private void HideMenus()
         {
             SetGameOverMenu(false);
@@ -118,17 +116,4 @@ namespace Match_3_Test
                 MainMenu.Visibility = Visibility.Hidden;
         }
     }
-}
-
-public enum BonusTypes
-{
-    None,
-    LineVertical,
-    LineHorizontal,
-    Bomb
-}
-
-public interface IElementBonus
-{
-    void Activate(Element[,] elements);
 }

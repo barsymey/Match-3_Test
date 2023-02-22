@@ -8,11 +8,15 @@ using System.Windows;
 
 namespace Match_3_Test
 {
+    /// <summary>
+    /// Core level logic object. Contains main gameplay loops, handles Elements behaviour.
+    /// </summary>
     public class GameField
     {
         public Canvas canvas;
         public delegate void GameFieldScoreHandler(int score);
         public event GameFieldScoreHandler ScoreChanged;
+
         public int Score
         {
             get { return _score; }
@@ -23,15 +27,25 @@ namespace Match_3_Test
                     ScoreChanged.Invoke(_score);
             }
         }
+        public Element[,] elements
+        {
+            get;
+            private set;
+        }
 
         private int _columns;
         private int _rows;
         private int _elementTypes;
-        private Element[,] elements;
+
+        // Element refs for handling player actions.
         private Element pickedElement;
-        private Element swapedPassive;
         private Element swapedActive;
+        private Element swapedPassive;
+
         private Random _random;
+        /// <summary>
+        /// Helps restricting player to make only one move per cycle.
+        /// </summary>
         private bool _playerMoveMade;
         private int _score;
 
@@ -48,25 +62,38 @@ namespace Match_3_Test
             Score = 0;
         }
 
+        /// <summary>
+        /// Main game loop.
+        /// </summary>
         public void UpdateGameField(object sender, EventArgs e)
         {
             DropElements();
-            SpawnElements();
             CheckElementMatches();
-            CheckElementForBonus(swapedActive);
-            HandleDestroyedElements();
+            Element bonusElement = CheckElementForBonus(swapedActive);
+            HandleMatchedElements();
             HandlePlayerSwappedElements();
+            if (bonusElement != null)
+                elements[bonusElement.posX, bonusElement.posY] = bonusElement;
+            SpawnElements();
         }
 
+        /// <summary>
+        /// Returns grid element cell size. For visual elements adjustments.
+        /// </summary>
         public Size GetElementSize()
         {
             return new Size(canvas.ActualWidth / this._columns, canvas.ActualHeight / this._rows);
         }
 
+        /// <summary>
+        /// Player interaction handler with Elements on GameField.
+        /// </summary>
         public void PickElement(Element selectedElement)
         {
             if (_playerMoveMade)
                 return;
+
+            UnselectAllElements();
             if (!selectedElement.CanBePicked())
             {
                 pickedElement = null;
@@ -75,6 +102,7 @@ namespace Match_3_Test
             if (pickedElement == null)
             {
                 pickedElement = selectedElement;
+                pickedElement.SetSelected(true);
                 return;
             }
             else if (AreNeightbors(pickedElement, selectedElement))
@@ -87,6 +115,19 @@ namespace Match_3_Test
             pickedElement = null;
         }
 
+        /// <summary>
+        /// Externally set Element as matched. For example when Element is destroyed by bomb.
+        /// </summary>
+        public void SetElementIsMatched(int x, int y)
+        {
+            if (x < 0 || y < 0 || x >= _columns || y >= _rows || elements[x, y] == null)
+                return;
+            elements[x, y].isMatched = true;
+        }
+
+        /// <summary>
+        /// Swaps two elements.
+        /// </summary>
         private void SwapElements(Element first, Element second)
         {
             elements[first.posX, first.posY] = second;
@@ -97,12 +138,20 @@ namespace Match_3_Test
             second.SetPosition(tx, ty);
         }
 
+        /// <summary>
+        /// Is called when game is over. This GameField can be disposed after.
+        /// </summary>
         public void ClearField()
         {
             foreach (Element element in elements)
                 DestroyElement(element);
+            canvas.Children.Clear();
+            MainWindow.gameLogicTimer.Tick -= this.UpdateGameField;
         }
 
+        /// <summary>
+        /// Drops elements on GameField if nothing is below and sets element as landed otherwise.
+        /// </summary>
         private void DropElements()
         {
             // Checking each Element in array starting from the bottom - 1
@@ -129,6 +178,9 @@ namespace Match_3_Test
                 }
         }
 
+        /// <summary>
+        /// Spawning elements on the top row.
+        /// </summary>
         private void SpawnElements()
         {
             for (int i = 0; i < _columns; i++)
@@ -138,6 +190,9 @@ namespace Match_3_Test
             }
         }
 
+        /// <summary>
+        /// Elements that matched in groups more than 3 are marked for destruction.
+        /// </summary>
         private void CheckElementMatches()
         {
             foreach (Element element in MatchFinder.FindMatches(elements))
@@ -147,15 +202,23 @@ namespace Match_3_Test
             }
         }
 
-        private void CheckElementForBonus(Element element)
+        /// <summary>
+        /// Checks active Element for bonus patterns and returns element constructed for replacement if active element is destroyed.
+        /// </summary>
+        private Element CheckElementForBonus(Element element)
         {
-            if (element != null)
-            {
-                MatchFinder.CheckElementForBonus(element, elements);
-            }
+            if (element == null)
+                return null;
+            BonusTypes bonus = MatchFinder.CheckElementForBonus(element, elements);
+            if (bonus == BonusTypes.None)
+                return null;
+            return new Element(element.posX, element.posY, this, element.type, bonus);
         }
 
-        private void HandleDestroyedElements()
+        /// <summary>
+        /// Elements that are marked as matched are destroyed
+        /// </summary>
+        private void HandleMatchedElements()
         {
             foreach (Element element in elements)
                 if (element != null && element.isMatched)
@@ -165,6 +228,9 @@ namespace Match_3_Test
                 }
         }
 
+        /// <summary>
+        /// Swaps back player swapped elements if these were not matched.
+        /// </summary>
         private void HandlePlayerSwappedElements()
         {
             if (_playerMoveMade)
@@ -188,8 +254,13 @@ namespace Match_3_Test
             elements[x, y] = new Element(x, y, this, type, bonus);
         }
 
+        /// <summary>
+        /// Also adds score point
+        /// </summary>
         private void DestroyElement(Element element)
         {
+            if (element == null)
+                return;
             int x = element.posX;
             int y = element.posY;
             if (elements[x, y] == null)
@@ -198,6 +269,9 @@ namespace Match_3_Test
             elements[x, y] = null;
         }
 
+        /// <summary>
+        /// Checking if two elements have adjacent sides
+        /// </summary>
         private bool AreNeightbors(Element first, Element second)
         {
             if (first.posX == second.posX)
@@ -209,6 +283,16 @@ namespace Match_3_Test
                 return (first.posX == second.posX + 1 || first.posX == second.posX - 1);
             }
             else return false;
+        }
+
+        /// <summary>
+        /// Unmarking all elements for visual purposes
+        /// </summary>
+        private void UnselectAllElements()
+        {
+            foreach (Element element in elements) 
+                if (element != null)
+                    element.SetSelected(false);
         }
     }
 }

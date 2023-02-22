@@ -55,6 +55,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="src\LineElementDestructor.cs" />
+    <Compile Include="src\Bonuses.cs" />
     <Compile Include="src\CountDownTimer.cs" />
     <Compile Include="src\ElementVisual.cs" />
     <Compile Include="src\MatchFinder.cs" />

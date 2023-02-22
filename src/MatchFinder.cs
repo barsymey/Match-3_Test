@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace Match_3_Test
 {
+    /// <summary>
+    /// A helper class that analyzes Game field for matches and bonus patterns.
+    /// </summary>
     public class MatchFinder
     {
         /// <summary>
@@ -89,6 +92,9 @@ namespace Match_3_Test
             return matchedElements;
         }
 
+        /// <summary>
+        /// Checks an element on a field for a bonus patterns.
+        /// </summary>
         public static BonusTypes CheckElementForBonus(Element element, Element[,] elements)
         {
             int rows = elements.GetLength(1);
@@ -102,6 +108,7 @@ namespace Match_3_Test
             int vertical;
             int horizontal;
 
+            // Counting elements of the same type from four sides of the given element
             int i = element.posX - 1;
             while (i >= 0)
             {
@@ -145,19 +152,17 @@ namespace Match_3_Test
             horizontal = left + right + 1;
             vertical = above + below + 1;
 
-            Console.WriteLine(horizontal + " " + vertical);
-
-            if (vertical > 2 && horizontal > 2)
+            if ((vertical > 2 && horizontal > 2) || (horizontal > 4 || vertical > 4))
             {
                 return BonusTypes.Bomb;
             }
-            else if (vertical >2)
-            {
-                return BonusTypes.LineVertical;
-            }
-            else if (horizontal > 2)
+            else if (vertical >3)
             {
                 return BonusTypes.LineHorizontal;
+            }
+            else if (horizontal > 3)
+            {
+                return BonusTypes.LineVertical;
             }
 
             return BonusTypes.None;

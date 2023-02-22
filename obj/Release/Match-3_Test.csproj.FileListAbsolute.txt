@@ -1,0 +1,16 @@
+C:\Users\Admin\source\repos\Match-3_Test\bin\Release\Match-3_Test.exe.config
+C:\Users\Admin\source\repos\Match-3_Test\bin\Release\Match-3_Test.exe
+C:\Users\Admin\source\repos\Match-3_Test\bin\Release\Match-3_Test.pdb
+C:\Users\Admin\source\repos\Match-3_Test\obj\Release\Match-3_Test.csproj.AssemblyReference.cache
+C:\Users\Admin\source\repos\Match-3_Test\obj\Release\Match-3_Test.csproj.SuggestedBindingRedirects.cache
+C:\Users\Admin\source\repos\Match-3_Test\obj\Release\MainWindow.g.cs
+C:\Users\Admin\source\repos\Match-3_Test\obj\Release\App.g.cs
+C:\Users\Admin\source\repos\Match-3_Test\obj\Release\Match-3_Test_MarkupCompile.cache
+C:\Users\Admin\source\repos\Match-3_Test\obj\Release\Match-3_Test_MarkupCompile.lref
+C:\Users\Admin\source\repos\Match-3_Test\obj\Release\MainWindow.baml
+C:\Users\Admin\source\repos\Match-3_Test\obj\Release\Match-3_Test.g.resources
+C:\Users\Admin\source\repos\Match-3_Test\obj\Release\Match_3_Test.Properties.Resources.resources
+C:\Users\Admin\source\repos\Match-3_Test\obj\Release\Match-3_Test.csproj.GenerateResource.cache
+C:\Users\Admin\source\repos\Match-3_Test\obj\Release\Match-3_Test.csproj.CoreCompileInputs.cache
+C:\Users\Admin\source\repos\Match-3_Test\obj\Release\Match-3_Test.exe
+C:\Users\Admin\source\repos\Match-3_Test\obj\Release\Match-3_Test.pdb

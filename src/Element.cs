@@ -3,6 +3,9 @@ using System.Windows;
 
 namespace Match_3_Test
 {
+    /// <summary>
+    /// GameField element behaviour
+    /// </summary>
     public class Element
     {
         public int posX
@@ -20,6 +23,9 @@ namespace Match_3_Test
         /// Is solidly landed and ready to be checked for matches
         /// </summary>
         public bool isLanded = false;
+        /// <summary>
+        /// Marked to be destroyed and counted next cycle.
+        /// </summary>
         public bool isMatched = false;
         public bool isPicked = false;
         public BonusTypes bonus;
@@ -33,7 +39,7 @@ namespace Match_3_Test
             this.posY = posY;
             this.parentField = parentField;
             this.type = type;
-            _elementVisual = new ElementVisual(type, ElementAction, this);
+            _elementVisual = new ElementVisual(type, ElementAction, this, bonus);
             this.bonus = bonus;
         }
 
@@ -41,12 +47,39 @@ namespace Match_3_Test
         {
             this.posX = posX;
             this.posY = posY;
-            _elementVisual.SetTargetPosition(posX, posY);
+            if (_elementVisual != null)
+                _elementVisual.SetTargetPosition(posX, posY);
         }
 
+        public void SetSelected(bool state)
+        {
+            if(_elementVisual != null)
+                _elementVisual.SetSelected(state);
+            isPicked = state;
+        }
+
+        /// <summary>
+        /// Also activates bonus if such is present.
+        /// </summary>
         public void Destroy()
         {
-            _elementVisual.Destroy();
+            if(_elementVisual != null)
+                _elementVisual.Destroy();
+            _elementVisual = null;
+            switch(bonus)
+            {
+                default:
+                    break;
+                case BonusTypes.Bomb:
+                    new BombBonus().Activate(this, parentField);
+                    break;
+                case BonusTypes.LineVertical:
+                    new LineVerticalBonus().Activate(this, parentField);
+                    break;
+                case BonusTypes.LineHorizontal:
+                    new LineHorizontalBonus().Activate(this, parentField);
+                    break;
+            }
         }
 
         public bool CanBePicked()
@@ -54,9 +87,11 @@ namespace Match_3_Test
             return isLanded && !isMatched && !isPicked;
         }
 
+        /// <summary>
+        /// Handle for player interaction with element.
+        /// </summary>
         private void ElementAction(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("landed: " + isLanded + " destroyed: " + isMatched + " pos: " + posX + "," + posY);
             parentField.PickElement(this);
         }
     }
